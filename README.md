@@ -10,12 +10,6 @@ quantum frameworks such as Qiskit.
 - Classical variables with `let` assignments
 - Quantum and classical bit declarations via `qubit` and `bit`
 - Basic quantum gates: `h`, `x`, `cx`, `cz`, `swap`
-- Rotation gates: `rx`, `ry`, `rz` and phase gates `s`, `sdg`, `t`, `tdg`
-- Multi-qubit gates: `ccx` (Toffoli) and `cswap` (Fredkin)
-- Quantum and classical bit arrays via `qubit[n]` / `bit[n]`
-- Measurement with `measure <qubit> -> <bit>`
-- Quantum subroutines with `def` and function calls
-- Classical `if` and `while` (compile-time) and runtime `if` based on measurements
 
 ## Usage
 

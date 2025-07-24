@@ -56,7 +56,6 @@ class WhileStmt(Statement):
         self.body = body
 
 # Parser functions
-
 def remove_comments(code: str) -> str:
     lines = []
     for line in code.splitlines():
@@ -229,7 +228,6 @@ class Parser:
         return stmts
 
 # Interpreter to build QASM
-
 class Compiler:
     def __init__(self, funcs: Dict[str, FunctionDef]):
         self.qasm = ["OPENQASM 2.0;", 'include "qelib1.inc";']
@@ -300,13 +298,21 @@ class Compiler:
         elif isinstance(stmt, IfStmt):
             if stmt.runtime:
                 cond_str = stmt.cond.replace(' ', '')
+                # Compile then branch
                 for s in stmt.then:
                     self.compile_stmt(s, mapping, cond_str)
+                # Compile else branch with negated condition
                 if stmt.else_:
-                    neg = cond_str.replace('==1', '==0').replace('==0', '==1')
+                    if '==' in cond_str:
+                        neg = cond_str.replace('==', '!=')
+                    elif '!=' in cond_str:
+                        neg = cond_str.replace('!=', '==')
+                    else:
+                        raise ValueError("Unsupported condition for runtime if")
                     for s in stmt.else_:
                         self.compile_stmt(s, mapping, neg)
             else:
+                # Static if, evaluate at compile time
                 cond_val = self.eval_expr(stmt.cond)
                 target = stmt.then if cond_val else stmt.else_
                 for s in target:
@@ -318,10 +324,6 @@ class Compiler:
         else:
             raise ValueError(f"Unknown stmt {stmt}")
 
-    def compile(self, program: List[Statement]):
-        for stmt in program:
-            self.compile_stmt(stmt)
-
     def compile_function(self, name: str, args: List[str], cond: str | None = None):
         if name not in self.funcs:
             raise ValueError(f"Undefined function {name}")
@@ -332,9 +334,12 @@ class Compiler:
         for st in func.body:
             self.compile_stmt(st, mapping, cond)
 
+    def compile(self, program: List[Statement]):
+        for stmt in program:
+            self.compile_stmt(stmt)
+
     def to_qasm(self) -> str:
         return "\n".join(self.qasm) + "\n"
-
 
 def compile_file(path: str) -> str:
     with open(path) as f:
