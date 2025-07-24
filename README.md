@@ -10,8 +10,6 @@ quantum frameworks such as Qiskit.
 - Classical variables with `let` assignments
 - Quantum and classical bit declarations via `qubit` and `bit`
 - Basic quantum gates: `h`, `x`, `cx`, `cz`, `swap`
-- Measurement with `measure <qubit> -> <bit>`
-- Classical `if` and `while` control flow (executed at compile time)
 
 ## Usage
 
